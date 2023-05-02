@@ -14,7 +14,12 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import br.senai.sp.jandira.rickandmorty.model.CharacterList
+import br.senai.sp.jandira.rickandmorty.service.RetrofitFactory
 import br.senai.sp.jandira.rickandmorty.ui.theme.RickAndMortyTheme
+import retrofit2.Callback
+import retrofit2.Call
+import retrofit2.Response
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -41,7 +46,25 @@ fun Greeting(name: String) {
     }
 
     Column() {
-        Button(onClick = { /*TODO*/ }) {
+        Button(onClick = {
+
+            val call = RetrofitFactory().getCharacterService().getCharacters()
+
+            call.enqueue(object : Callback<CharacterList>{
+                override fun onResponse(
+                    call: Call<CharacterList>,
+                    response: Response<CharacterList>
+                ) {
+                    results = response.body()!!.results
+                }
+
+                override fun onFailure(call: Call<CharacterList>, t: Throwable) {
+
+                }
+
+            })
+
+        }) {
             Text(text =  "List all Characters")
         }
         LazyColumn(){
